@@ -129,7 +129,7 @@ public class AutomanagerApplication implements CommandLineRunner {
 	
     CredencialUsuarioSenha credencialFornecedor = new CredencialUsuarioSenha();
     credencialFornecedor.setInativo(false);
-    credencialFornecedor.setNomeUsuario("dompedrofornecedor");
+    credencialFornecedor.setNomeUsuario("mariana");
 
     credencialFornecedor.setSenha(senha);
     credencialFornecedor.setCriacao(new Date());

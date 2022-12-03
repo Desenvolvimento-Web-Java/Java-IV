@@ -33,18 +33,18 @@ public class UsuarioHateos implements Hateos<Usuario> {
 						.pegarTodosUsuarios())
 				.withRel("Clientes");
 		objeto.add(linkProprio);
-		Link atualizarUser = WebMvcLinkBuilder
+		Link atualizarUsu = WebMvcLinkBuilder
 				.linkTo(WebMvcLinkBuilder
 						.methodOn(ControleUsuario.class)
 						.atualizarUsuario(objeto.getId(), objeto))
 				.withRel("Atualizar");
-		objeto.add(atualizarUser);
-		Link deletarUser = WebMvcLinkBuilder
+		objeto.add(atualizarUsu);
+		Link deletarUsu = WebMvcLinkBuilder
 				.linkTo(WebMvcLinkBuilder
 						.methodOn(ControleUsuario.class)
 						.DeletarUser(objeto.getId()))
 				.withRel("Deletar");
-		objeto.add(deletarUser);
+		objeto.add(deletarUsu);
 	}
 
 }

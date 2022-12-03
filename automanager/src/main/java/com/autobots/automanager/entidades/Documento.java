@@ -2,28 +2,26 @@ package com.autobots.automanager.entidades;
 
 import java.util.Date;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+
+import com.autobots.automanager.enumeracoes.TipoDocumento;
 
 import lombok.Data;
 
 @Data
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Credencial {
-	@Id()
+public class Documento {
+	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Column(nullable = false)
-	private Date criacao;
-	@Column()
-	private Date ultimoAcesso;
+	private TipoDocumento tipo;
 	@Column(nullable = false)
-	private boolean inativo;
+	private Date dataEmissao;
+	@Column(unique = true, nullable = false)
+	private String numero;
 }

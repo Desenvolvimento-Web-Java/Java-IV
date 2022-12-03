@@ -10,10 +10,10 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Cliente {
+public class Email {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column
-	private String nome;
+	@Column(nullable = false)
+	private String endereco;
 }

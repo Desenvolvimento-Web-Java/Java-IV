@@ -1,6 +1,7 @@
 package com.autobots.automanager.adaptadores;
 
 import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -8,34 +9,44 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.autobots.automanager.entidades.Usuario;
-import com.autobots.automanager.modelos.Perfil;
 
-@SuppressWarnings("serial")
+import com.autobots.automanager.enumeracoes.Perfil;
+
+
 public class UserDetailsImpl implements UserDetails {
-	private Usuario usuario;
-
-	public UserDetailsImpl(Usuario usuario) {
-		this.usuario = usuario;
+private static final long serialVersionUID = 1L;
+	
+	private String email;
+	private String password;
+	private Collection<? extends GrantedAuthority> autenticacao;
+	
+	public UserDetailsImpl(String email, String senha, List<Perfil> roles) {
+	    this.email = email;
+	    this.password = senha;
+	    this.gerarAutoridades(roles);
+	  }
+	
+	private void gerarAutoridades(List<Perfil> perfis) {
+		List<SimpleGrantedAuthority> autoridadesPerfis = new ArrayList<>();
+		for (Perfil perfil : perfis) {
+			autoridadesPerfis.add(new SimpleGrantedAuthority(perfil.name()));
+		}
+		this.autenticacao = autoridadesPerfis;
 	}
-
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		List<SimpleGrantedAuthority> autoridades = new ArrayList<>();
-		for (Perfil perfil : usuario.getPerfis()) {
-			autoridades.add(new SimpleGrantedAuthority(perfil.name()));
-		}
-		return autoridades;
+		return this.autenticacao;
 	}
-
+	
 	@Override
 	public String getPassword() {
-		return usuario.getCredencial().getSenha();
+		return this.password;
 	}
 
 	@Override
 	public String getUsername() {
-		return usuario.getCredencial().getNomeUsuario();
+		return this.email;
 	}
 
 	@Override
@@ -56,5 +67,5 @@ public class UserDetailsImpl implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
-	}
+	}		
 }

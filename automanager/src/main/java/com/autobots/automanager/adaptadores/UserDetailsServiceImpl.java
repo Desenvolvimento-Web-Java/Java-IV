@@ -1,6 +1,7 @@
 package com.autobots.automanager.adaptadores;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,34 +9,54 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.autobots.automanager.entidades.Credencial;
+import com.autobots.automanager.entidades.CredencialUsuarioSenha;
 import com.autobots.automanager.entidades.Usuario;
+import com.autobots.automanager.repositorios.RepositorioCredencialUsuarioSenha;
 import com.autobots.automanager.repositorios.RepositorioUsuario;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-
 	@Autowired
 	private RepositorioUsuario repositorio;
+	@Autowired
+	private RepositorioCredencialUsuarioSenha repoCred;
 
-	private Usuario obterPorNome(String nomeUsuario) {
-		List<Usuario> usuarios = repositorio.findAll();
-		Usuario selecionado = null;
-		for (Usuario usuario : usuarios) {
-			if (usuario.getCredencial().getNomeUsuario().equals(nomeUsuario)) {
-				selecionado = usuario;
-				break;
+	public Usuario selecionar(List<Usuario> objetos, String identificador) {
+		Usuario usuario = null;
+		for (Usuario objeto : objetos) {
+			Set<Credencial> credencial = objeto.getCredenciais();
+			for(Credencial credencia: credencial) {
+				for(CredencialUsuarioSenha cred : repoCred.findAll()) {
+					if(credencia.getId() == cred.getId()) {
+						String nomeUsuario = cred.getNomeUsuario();
+						if (nomeUsuario.trim().equals(identificador.trim())) {
+							usuario = objeto;
+							break;
+						}
+					}
+				}
 			}
 		}
-		return selecionado;
+		return usuario;
 	}
 
-	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Usuario selecionado = this.obterPorNome(username);
-		if (selecionado == null) {
+		List<Usuario> usuarios = repositorio.findAll();
+		Usuario usuario = selecionar(usuarios, username);
+		if (usuario == null) {
 			throw new UsernameNotFoundException(username);
 		}
-		UserDetailsImpl usuario = new UserDetailsImpl(selecionado);
-		return usuario;
+		String nomeUsuario = "";
+		String password = "";
+		for(Credencial credencia: usuario.getCredenciais()) {
+			for(CredencialUsuarioSenha cred : repoCred.findAll()) {
+				if(credencia.getId() == cred.getId()) {
+					nomeUsuario = cred.getNomeUsuario();
+					password = cred.getSenha();
+				}
+			}
+		}
+		return new UserDetailsImpl(nomeUsuario, password, usuario.getNivelDeAcesso());
 	}
 }

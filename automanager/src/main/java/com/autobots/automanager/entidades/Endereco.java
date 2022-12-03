@@ -1,29 +1,31 @@
 package com.autobots.automanager.entidades;
 
-import java.util.Date;
-
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 
 import lombok.Data;
 
 @Data
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Credencial {
-	@Id()
+public class Endereco {
+	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Column(nullable = false)
-	private Date criacao;
-	@Column()
-	private Date ultimoAcesso;
+	private String estado;
 	@Column(nullable = false)
-	private boolean inativo;
+	private String cidade;
+	@Column(nullable = false)
+	private String bairro;
+	@Column(nullable = false)
+	private String rua;
+	@Column(nullable = false)
+	private String numero;
+	@Column(nullable = false)
+	private String codigoPostal;
+	@Column()
+	private String informacoesAdicionais;
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +22,11 @@ import com.autobots.automanager.entidades.Mercadoria;
 import com.autobots.automanager.entidades.Servico;
 import com.autobots.automanager.entidades.Usuario;
 import com.autobots.automanager.entidades.Veiculo;
+import com.autobots.automanager.entidades.Venda;
+import com.autobots.automanager.hateos.ServicoHateos;
 import com.autobots.automanager.servicos.EmpresaServico;
 import com.autobots.automanager.servicos.ServicoServico;
+import com.autobots.automanager.servicos.VendaServico;
 
 @RestController
 @RequestMapping("/servico")
@@ -38,6 +43,13 @@ public class ControleServico {
 	  @Autowired
 	  private EmpresaSelecionador empSelecionador;
 	  
+	  @Autowired
+	  private VendaServico vendServ;
+	  
+	  @Autowired
+	  private ServicoHateos hateos;
+	  
+	  @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_GERENTE')")
 	  @GetMapping ("/todos")
 		public ResponseEntity<?> pegarTodosServicos (){
 			List<Servico> todos = servServ.pegarTodos();
@@ -50,6 +62,7 @@ public class ControleServico {
 			}
 		}
 	  
+	  	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_GERENTE')")
 		@GetMapping ("/todos/{idServico}")
 		public ResponseEntity<?> pegarServico (@PathVariable Long idServico){
 			Servico selecionado = servSelecionador.selecionar(servServ.pegarTodos(), idServico);
@@ -63,6 +76,7 @@ public class ControleServico {
 			}
 		}
 		
+	  	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_GERENTE')")
 		@PostMapping ("/cadastro/{idEmpresa}")
 		public ResponseEntity<?> cadastroServico(
 			@PathVariable Long idEmpresa, 
@@ -79,6 +93,7 @@ public class ControleServico {
 			}
 		}
 		
+	  	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_GERENTE')")
 		@PutMapping("/atualizar/{idServico}")
 		public ResponseEntity<?> atualizarServico(
 			@PathVariable Long idServico,
@@ -95,4 +110,32 @@ public class ControleServico {
 			    }
 			return new ResponseEntity<>(status);
 		}
+	  	
+	    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_GERENTE')")
+	    @DeleteMapping("/deletar/{idServico}")
+	    public ResponseEntity<?> deletarServico(@PathVariable Long idServico) {
+	      List<Servico> lista = servServ.pegarTodos();
+	      List<Venda> vendas = vendServ.pegarTodos();
+	      Servico select = servSelecionador.selecionar(lista, idServico);
+	      List<Empresa> empresas = empServ.pegarTodas();
+	      if (select != null) {
+	        for (Empresa empresasServico : empresas) {
+	          for (Servico ServicoNaEmpresas : empresasServico.getServicos()) {
+	            if (ServicoNaEmpresas.getId().equals(select.getId())) {
+	              empresasServico.getServicos().remove(ServicoNaEmpresas);
+	            }
+	          }
+	        }
+	        for (Venda vendasServico : vendas) {
+	          for (Servico servicoNaVenda : vendasServico.getServicos()) {
+	            if (servicoNaVenda.getId().equals(select.getId())) {
+	              vendasServico.getServicos().remove(servicoNaVenda);
+	            }
+	          }
+	        }
+	        servServ.deletar(idServico);
+	        return new ResponseEntity<>("Servico Deletado", HttpStatus.ACCEPTED);
+	      }
+	      return new ResponseEntity<>("Servico não encontrado", HttpStatus.NOT_FOUND);
+	    }
 }

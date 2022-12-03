@@ -34,13 +34,18 @@ public class VeiculoHateos implements Hateos<Veiculo>{
 						.pegarTodosVeiculos())
 				.withRel("Veiculos");
 		objeto.add(linkProprio);
-		Link atualizarUser = WebMvcLinkBuilder
+		Link atualizarVeic = WebMvcLinkBuilder
 				.linkTo(WebMvcLinkBuilder
 						.methodOn(ControleVeiculo.class)
 						.atualizarVeiculo(objeto.getId(), objeto))
 				.withRel("Atualizar");
-		objeto.add(atualizarUser);
-
+		objeto.add(atualizarVeic);
+		Link deletarVeic = WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder
+						.methodOn(ControleVeiculo.class)
+						.deletarVeiculo(objeto.getId()))
+				.withRel("Deletar");
+		objeto.add(deletarVeic);
 		
 	}
 

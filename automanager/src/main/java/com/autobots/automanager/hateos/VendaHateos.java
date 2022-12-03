@@ -33,5 +33,17 @@ public class VendaHateos implements Hateos<Venda>{
 						.pegarTodasVendas())
 				.withRel("Vendas");
 		objeto.add(linkProprio);
+		Link atualizarVend = WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder
+						.methodOn(ControleVenda.class)
+						.atualizarVenda(objeto.getId(), objeto))
+				.withRel("Atualizar");
+		objeto.add(atualizarVend);
+		Link deletarVend = WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder
+						.methodOn(ControleVenda.class)
+						.deletarVendas(objeto.getId()))
+				.withRel("Deletar");
+		objeto.add(deletarVend);
 	}
 }

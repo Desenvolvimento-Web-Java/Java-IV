@@ -34,13 +34,18 @@ public class ServicoHateos implements Hateos<Servico> {
 						.pegarTodosServicos())
 				.withRel("Serviços");
 		objeto.add(linkProprio);
-		Link atualizarUser = WebMvcLinkBuilder
+		Link atualizarServ = WebMvcLinkBuilder
 				.linkTo(WebMvcLinkBuilder
 						.methodOn(ControleServico.class)
 						.atualizarServico(objeto.getId(), objeto))
 				.withRel("Atualizar");
-		objeto.add(atualizarUser);
-
+		objeto.add(atualizarServ);
+		Link deletarServ = WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder
+						.methodOn(ControleServico.class)
+						.deletarServico(objeto.getId()))
+				.withRel("Deletar");
+		objeto.add(deletarServ);
 		
 	}
 

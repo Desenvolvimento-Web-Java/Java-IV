@@ -34,9 +34,6 @@ public class UsuarioServico {
 	private RepositorioDocumento repoDocumento;
 	
 	@Autowired
-	private RepositorioCredencialUsuarioSenha repositorioCredencialUsuarioSenha;
-	
-	@Autowired
 	private RepositorioTelefone repositorioTelefone;
 	
 	@Autowired
@@ -163,11 +160,6 @@ public class UsuarioServico {
 	private void updateDataDocumento(Documento newObj, Documento obj) {
 		newObj.setNumero(obj.getNumero());
 		newObj.setDataEmissao(new Date());
-	}
-	
-	
-	public List<CredencialUsuarioSenha> credencial() {
-		return repositorioCredencialUsuarioSenha.findAll();
 	}
 	
 	public void deletarMercadoria(Long idCliente, Long idMercadoria) {
